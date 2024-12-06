@@ -33,11 +33,36 @@ export function useLogout() {
             return (await axiosInstance.post(API_ENDPOINT.LOGOUT))
         },
         onSuccess: () => {
-            window.localStorage.removeItem('token')
-            window.localStorage.removeItem('user')
+            localStorage.removeItem('auth-storage')
             router.replace('auth')
         }
     })
+}
+
+export function useProfile({ slug }: { slug: string }) {
+    const fetchData = async () => {
+        return (await axiosInstance.get(`${API_ENDPOINT.USER}/${slug}`)).data
+    }
+
+    return useQuery({
+        queryKey: [API_ENDPOINT.USER, slug],
+        queryFn: fetchData
+    })
+}
+
+export function useUpdateUser() {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (data) => {
+            const response = await axiosInstance.patch(API_ENDPOINT.USER, data)
+            return response.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.USER] })
+        }
+    })
+
+    return mutation
 }
 
 export function useFollowing({ id }: { id: string }) {
@@ -153,4 +178,18 @@ export function useCreateNewMessage() {
     })
 
     return mutate
+}
+
+
+export const useUploadAvatar = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (data: FormData) => {
+            const response = await axiosInstance.patch(API_ENDPOINT.UPDATE_AVATAR, data)
+            return response.data
+        },
+        // onSuccess: () => {
+        //     queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.FOLLOWING_AND_FRIEND] })
+        // }
+    })
 }

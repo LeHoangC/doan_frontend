@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 export const axiosInstance = axios.create({
@@ -10,14 +11,16 @@ export const axiosInstance = axios.create({
 const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const { method, url } = config;
 
-    const token = window.localStorage.getItem('token')
-    const userJson = window.localStorage.getItem('user')
-    const userParse = JSON.parse(userJson!)
+    const authStore = JSON.parse(localStorage.getItem('auth-storage')!)
+
+    if (!authStore) {
+        window.location.href = '/auth'
+    }
 
     if (url !== '/auth/login' && url !== '/auth/signup') {
         if (config && config.headers) {
-            config.headers['authorization'] = token
-            config.headers['x-client-id'] = userParse._id
+            config.headers['authorization'] = authStore.state.token
+            config.headers['x-client-id'] = authStore.state.user._id
         }
     }
 
@@ -63,8 +66,7 @@ const onErrorResponse = (error: AxiosError | Error): Promise<AxiosError> => {
         }
 
         if (status === 401) {
-            window.localStorage.removeItem('token')
-            window.localStorage.removeItem('user')
+            localStorage.removeItem('auth-storage')
             window.location.href = '/auth'
         }
     } else {

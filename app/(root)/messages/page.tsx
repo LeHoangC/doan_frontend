@@ -9,6 +9,7 @@ moment.locale('vi')
 import { io, Socket } from 'socket.io-client'
 import { useQueryClient } from '@tanstack/react-query'
 import { API_ENDPOINT } from '@/data/api-endpoint'
+import { useAuthStore } from '@/store'
 
 type SelectedUserContextType = {
     selectedUser: any
@@ -33,7 +34,7 @@ const useSelectedUser = () => {
 const SelectedUserProvider = ({ children }: { children: React.ReactNode }) => {
     const socket = useRef<Socket | null>()
 
-    const user = JSON.parse(window.localStorage.getItem('user')!)
+    const { user } = useAuthStore()
 
     const [selectedUser, setSelectedUser] = useState(null)
     const [currentChat, setCurrentChat] = useState(null)
@@ -63,8 +64,9 @@ const SelectedUserProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const Sidebar = () => {
-    const user = JSON.parse(window.localStorage.getItem('user')!)
-    const { data } = useFriends({ id: user?._id })
+    const { user } = useAuthStore()
+
+    const { data } = useFriends({ id: user?._id! })
     const { mutate: createConversation } = useCreateConversation()
     const { setSelectedUser, setCurrentChat, onlineUser } = useSelectedUser()
 
@@ -163,7 +165,7 @@ const ChatHeader = () => {
                 />
                 <div>
                     <h2 className="text-lg font-bold">{selectedUser.name}</h2>
-                    <p className="text-sm text-gray-500">Grateful for every sunrise and sunset 🌅</p>
+                    {/* <p className="text-sm text-gray-500">Grateful for every sunrise and sunset 🌅</p> */}
                 </div>
             </div>
         </div>
@@ -240,7 +242,8 @@ const Message = ({ message }: { message: any }) => {
 }
 
 const ChatInput = () => {
-    const user = JSON.parse(window.localStorage.getItem('user')!)
+    const { user } = useAuthStore()
+
     const { currentChat, socket, selectedUser } = useSelectedUser()
     const { mutate: createNewMessage } = useCreateNewMessage()
     const { register, handleSubmit, setValue, getValues } = useForm({ defaultValues: { messageText: '' } })
@@ -249,7 +252,7 @@ const ChatInput = () => {
         createNewMessage({ conversationId: currentChat._id, text: data.messageText })
 
         const dataEmit = {
-            senderId: user._id,
+            senderId: user?._id,
             receiverId: selectedUser._id,
             text: getValues('messageText'),
         }

@@ -23,9 +23,6 @@ export const usePostsQuery = async (options?: Pick<QueryOptions, 'limit'>) => {
         },
     })
 
-    console.log(data?.pages?.flatMap((page) => page.data) ?? []);
-
-
     return { posts: data?.pages?.flatMap((page) => page.data) ?? [], loadMore: fetchNextPage }
 }
 

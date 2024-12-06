@@ -3,6 +3,8 @@ export const API_ENDPOINT = {
     REGISTER: '/auth/signup',
     LOGOUT: '/auth/logout',
 
+    USER: "users",
+    UPDATE_AVATAR: "users/upload-avatar",
     FOLLOWING: "users/following",
     NOT_FRIEND: "users/not-friend",
     ADD_FRIEND: "users/add-friend",

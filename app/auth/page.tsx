@@ -9,6 +9,7 @@ import { useLogin, useRegister } from '@/data/user'
 import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import { useAuthStore } from '@/store'
 
 type FormLogin = {
     email: string
@@ -26,6 +27,7 @@ const Auth = () => {
     const [isShowPass, setIsShowPass] = useState(false)
     const { mutate: login } = useLogin()
     const { mutate: register } = useRegister()
+    const { login: loginStore } = useAuthStore()
 
     const router = useRouter()
 
@@ -52,9 +54,7 @@ const Auth = () => {
             { email, password },
             {
                 onSuccess: ({ metadata }) => {
-                    window.localStorage.setItem('token', metadata?.tokens.accessToken)
-                    window.localStorage.setItem('user', JSON.stringify(metadata.user))
-                    window.localStorage.setItem('id', metadata.user._id)
+                    loginStore(metadata)
                     router.replace('/')
                 },
                 onError: (errors: any) => {
@@ -69,9 +69,7 @@ const Auth = () => {
             { email, password, name },
             {
                 onSuccess: ({ metadata }) => {
-                    window.localStorage.setItem('token', metadata?.tokens.accessToken)
-                    window.localStorage.setItem('user', JSON.stringify(metadata.user))
-                    window.localStorage.setItem('id', metadata.user._id)
+                    loginStore(metadata)
                     router.replace('/')
                 },
                 onError: (errors: any) => {

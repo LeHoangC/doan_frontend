@@ -8,12 +8,17 @@ import Comments from './Comments'
 import { useDeletePostMutation, useLikePost } from '@/data/post'
 import moment from 'moment'
 import { TbMessageReportFilled } from 'react-icons/tb'
+import Link from 'next/link'
+import { RiGitRepositoryPrivateFill } from 'react-icons/ri'
+import { useAuthStore } from '@/store'
+
 moment.locale('vi')
 
 const Post = ({ data }: { data: any }) => {
     const {
         _id,
         post_content,
+        post_type,
         post_picturePath,
         post_likeCount,
         post_commentCount,
@@ -22,8 +27,8 @@ const Post = ({ data }: { data: any }) => {
         createdAt,
     } = data
 
-    const idUser = localStorage.getItem('id')!
-    const [isLike, setIsLike] = useState(post_likes[idUser])
+    const { user: userStore } = useAuthStore()
+    const [isLike, setIsLike] = useState(post_likes[userStore?._id!])
     const [likeCount, setLikeCount] = useState(post_likeCount)
 
     const { mutate: likePost } = useLikePost()
@@ -40,25 +45,26 @@ const Post = ({ data }: { data: any }) => {
     }
 
     return (
-        <div className="px-4 py-6 flex flex-col gap-4 shadow-lg rounded-lg">
+        <div className="px-4 py-6 flex flex-col gap-4 shadow-lg rounded-xl bg-[#1f1f1f]">
             {/* USER */}
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+                <Link href={`profile/${user.slug}`} className="flex items-center gap-4">
                     <Image
-                        src="https://images.pexels.com/photos/29062949/pexels-photo-29062949/free-photo-of-ng-i-ph-n-sanh-di-u-trong-chi-c-ao-khoac-xanh-ngoai-tr-i-mua-dong.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+                        src={user?.picturePath ? `http://localhost:3001/assets/${user?.picturePath}` : '/no-avatar.png'}
                         alt=""
                         width={40}
                         height={40}
                         className="w-10 h-10 rounded-full"
                     />
                     <div>
-                        <span className="font-semibold text-lg">{user.name}</span>
-                        <span className="block text-sm">{moment(createdAt).fromNow()}</span>
+                        <span className="font-semibold text-lg text-white">{user.name}</span>
+                        <span className="block text-sm text-white">{moment(createdAt).fromNow()}</span>
                     </div>
-                </div>
+                    {post_type === 'private' && <RiGitRepositoryPrivateFill className="text-white" />}
+                </Link>
 
                 <div className="dropdown dropdown-end">
-                    <div tabIndex={0} className="">
+                    <div tabIndex={0} className="text-white">
                         <FiMoreHorizontal className="cursor-pointer" size={16} />
                     </div>
                     <ul tabIndex={0} className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-max shadow">
@@ -67,7 +73,7 @@ const Post = ({ data }: { data: any }) => {
                                 Báo cáo bài viết <TbMessageReportFilled />
                             </a>
                         </li>
-                        {idUser === user._id && (
+                        {userStore?._id === user._id && (
                             <li className="text-red-400">
                                 <button onClick={handleDeletePost}>
                                     Xóa bài viết <FaTrash />
@@ -79,7 +85,7 @@ const Post = ({ data }: { data: any }) => {
             </div>
             {/* POST */}
             <div className="flex flex-col gap-4">
-                <p className="">{post_content}</p>
+                <p className="text-white">{post_content}</p>
                 {post_picturePath && (
                     <div className="w-full min-h-96 relative">
                         <Image src={post_picturePath} alt="image post" fill className="object-fill rounded-md" />
@@ -89,7 +95,7 @@ const Post = ({ data }: { data: any }) => {
             {/* REACTION */}
             <div className="flex items-center justify-between text-sm my-4">
                 <div className="flex gap-6">
-                    <div className="flex items-center gap-3 bg-slate-100 p-2 rounded-xl cursor-pointer">
+                    <div className="flex items-center gap-3 text-white p-2 rounded-xl cursor-pointer">
                         <div onClick={handleLike}>
                             {isLike ? (
                                 <AiFillLike size={16} color="blue" />
@@ -103,7 +109,7 @@ const Post = ({ data }: { data: any }) => {
                             <span className="hidden md:inline select-none text-[13px]"> Thích</span>
                         </span>
                     </div>
-                    <div className="flex items-center gap-3 bg-slate-100 p-2 rounded-xl cursor-pointer">
+                    <div className="flex items-center gap-3 text-white p-2 rounded-xl cursor-pointer">
                         <FaRegCommentDots size={16} />
                         {/* <AiFillLike size={16} color="blue" /> */}
                         <span className="text-gray-300 select-none">|</span>
@@ -114,7 +120,7 @@ const Post = ({ data }: { data: any }) => {
                     </div>
                 </div>
                 <div className="">
-                    <div className="flex items-center gap-3 bg-slate-100 p-2 rounded-xl">
+                    <div className="flex items-center gap-3 text-white p-2 rounded-xl">
                         <PiShareFatThin size={16} className="cursor-pointer" />
                         {/* <AiFillLike size={16} color="blue" /> */}
                         <span className="text-gray-300 select-none">|</span>

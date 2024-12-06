@@ -5,10 +5,12 @@ import Link from 'next/link'
 import React from 'react'
 import { IoIosCheckmarkCircle, IoIosCloseCircle } from 'react-icons/io'
 import { useAcceptFriend } from '@/data/user'
+import { useAuthStore } from '@/store'
 
 const FriendRequests = () => {
-    const user = JSON.parse(window.localStorage.getItem('user')!)
-    const { data } = useFriendRequest({ id: user?._id })
+    const { user } = useAuthStore()
+
+    const { data } = useFriendRequest({ id: user?._id! })
     const { mutate: acceptFriend } = useAcceptFriend()
 
     const handleAcceptFriend = (id: string) => {

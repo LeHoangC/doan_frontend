@@ -6,6 +6,7 @@ import { CommentQueryoptions } from "@/types"
 
 type CommentInput = FormComment & {
     postId?: string,
+    parentCommentId?: string
 }
 
 export const useCreateComment = () => {
@@ -58,5 +59,19 @@ export const useCommentsQueryInfinity = (params: Partial<CommentQueryoptions>, o
     return {
         comments: data
     }
+}
 
+export const useDeleteCommentMutation = () => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (data: { commentId: string, postId: string }) => {
+            const response = await axiosInstance.delete(`${API_ENDPOINT.COMMENT}`, { data: data })
+            return response.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.COMMENT] })
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.FOLLOWING_AND_FRIEND] })
+        }
+    })
+    return mutation
 }

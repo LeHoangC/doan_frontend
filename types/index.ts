@@ -4,7 +4,8 @@ export type QueryOptions = {
 }
 
 export type CommentQueryoptions = QueryOptions & {
-    postId: string
+    postId: string;
+    parentCommentId?: string
 }
 
 export type LoginType = {
@@ -22,20 +23,22 @@ export type AuthResponse = {
     message: string,
     metadata: {
         tokens: Tokens,
-        user: User
+        user: User,
     },
     status: number
 }
 
-type Tokens = {
+export type Tokens = {
     accessToken: string,
     refreshToken: string
 }
 
-type User = {
+export type User = {
     _id: string,
     name: string,
     email: string
+    picturePath?: string
+    slug: string
 }
 
 export type PostType = {

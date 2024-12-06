@@ -6,7 +6,7 @@ import SuggestFriend from './SuggestFriend'
 
 const RightMenu = ({ userId }: { userId?: string }) => {
     return (
-        <div className="fixed">
+        <div className="sticky top-[120px]">
             <div className="flex flex-col gap-4">
                 {userId ? (
                     <>

@@ -1,11 +1,13 @@
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { GrEmoji } from 'react-icons/gr'
 import { useCommentsQuery, useCreateComment } from '@/data/comment'
 import Comment from './Comment'
+import { useAuthStore } from '@/store'
 
 const commentValidateSchema = yup.object().shape({
     content: yup.string().trim(),
@@ -20,8 +22,10 @@ const defaultValues = {
 }
 
 const Comments = ({ postId }: { postId: string }) => {
-    const { mutate: createComment, isSuccess } = useCreateComment()
+    const { mutate: createComment } = useCreateComment()
     const [page, setPage] = useState(1)
+    const [showPicker, setShowPicker] = useState<boolean>(false)
+    const { user } = useAuthStore()
 
     const { register, handleSubmit, setValue, getValues } = useForm<FormComment>({
         defaultValues,
@@ -34,11 +38,16 @@ const Comments = ({ postId }: { postId: string }) => {
     }
     const { comments } = useCommentsQuery({ page, postId })
 
+    const onEmojiClick = (emojiObject: EmojiClickData) => {
+        const currentValue = getValues('content')
+        setValue('content', currentValue + emojiObject.emoji)
+    }
+
     return (
         <div className="">
             <div className="flex items-center gap-4">
                 <Image
-                    src="https://images.pexels.com/photos/29062949/pexels-photo-29062949/free-photo-of-ng-i-ph-n-sanh-di-u-trong-chi-c-ao-khoac-xanh-ngoai-tr-i-mua-dong.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+                    src={user?.picturePath ? `http://localhost:3001/assets/${user.picturePath}` : '/no-avatar.png'}
                     alt=""
                     width={32}
                     height={32}
@@ -46,15 +55,24 @@ const Comments = ({ postId }: { postId: string }) => {
                 />
                 <form
                     onSubmit={handleSubmit(onSubmit)}
-                    className="flex-1 flex items-center justify-between bg-slate-100 px-6 py-2 text-sm rounded-xl w-full"
+                    className="flex-1 flex items-center relative justify-between px-6 py-2 text-sm rounded-xl w-full border border-white"
                 >
                     <input
                         {...register('content')}
                         type="text"
                         placeholder="Bình luận..."
-                        className="bg-transparent outline-none flex-1"
+                        className="bg-transparent outline-none flex-1 caret-white text-white"
                     />
-                    <GrEmoji size={18} className="cursor-pointer" />
+                    <GrEmoji
+                        size={18}
+                        className="cursor-pointer text-white"
+                        onClick={() => setShowPicker((prev) => !prev)}
+                    />
+                    {showPicker && (
+                        <div className="absolute right-0 bottom-full">
+                            <EmojiPicker onEmojiClick={onEmojiClick} />
+                        </div>
+                    )}
                 </form>
             </div>
             <div className="divider"></div>

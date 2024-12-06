@@ -1,7 +1,6 @@
 import AddPost from '@/components/AddPost'
 import Feed from '@/components/Feed'
 import LeftMenu from '@/components/LeftMenu'
-import Navbar from '@/components/Navbar'
 import RightMenu from '@/components/RightMenu'
 import Stories from '@/components/Stories'
 import { Metadata } from 'next'
@@ -13,7 +12,7 @@ export const metadata: Metadata = {
 
 const Home = () => {
     return (
-        <div className="bg-slate-100 px-4 md:px-10 lg:px-14 xl:px-20 2xl:px-40">
+        <div className="bg-black px-4 md:px-10 lg:px-12 xl:px-20 2xl:px-32">
             <div className="flex gap-6 pt-6">
                 <div className="hidden top-24 xl:block w-[20%]">
                     <LeftMenu type="home" />

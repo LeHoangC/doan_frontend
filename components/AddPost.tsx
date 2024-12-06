@@ -5,6 +5,7 @@ import { FaImage } from 'react-icons/fa'
 import { IoCloseSharp } from 'react-icons/io5'
 import { useForm, Controller } from 'react-hook-form'
 import { useCreatePostMutation } from '@/data/post'
+import { useAuthStore } from '@/store'
 
 type CustomFile = File & {
     preview?: string
@@ -20,8 +21,7 @@ const AddPost = () => {
     const modalRef = useRef<HTMLDialogElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
-    const userJson = window.localStorage.getItem('user')
-    const userParse = JSON.parse(userJson!)
+    const { user } = useAuthStore()
 
     const { mutate: createPost, isPending, isSuccess } = useCreatePostMutation()
 
@@ -78,10 +78,10 @@ const AddPost = () => {
 
     return (
         <div>
-            <div className="p-4 bg-white shadow-md rounded-lg flex gap-4 justify-between items-center text-sm">
+            <div className="p-4 bg-[#1f1f1f] shadow-md rounded-lg flex gap-4 justify-between items-center text-sm">
                 <Image
                     alt="avatar"
-                    src="https://images.pexels.com/photos/29062949/pexels-photo-29062949/free-photo-of-ng-i-ph-n-sanh-di-u-trong-chi-c-ao-khoac-xanh-ngoai-tr-i-mua-dong.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+                    src={user?.picturePath ? `http://localhost:3001/assets/${user?.picturePath}` : '/no-avatar.png'}
                     width={40}
                     height={40}
                     className="w-10 h-10 object-cover rounded-full"
@@ -92,7 +92,7 @@ const AddPost = () => {
                         <input
                             readOnly
                             placeholder="Bạn đang nghĩ gì?"
-                            className="flex-1 border-none outline-none bg-slate-100 rounded-lg px-2 py-3"
+                            className="flex-1 border-white bg-transparent rounded-lg px-2 py-3"
                             onClick={openModal}
                         />
                     </div>
@@ -114,7 +114,11 @@ const AddPost = () => {
                             <div className="w-12 rounded-full">
                                 <Image
                                     alt="avatar"
-                                    src="https://images.pexels.com/photos/29062949/pexels-photo-29062949/free-photo-of-ng-i-ph-n-sanh-di-u-trong-chi-c-ao-khoac-xanh-ngoai-tr-i-mua-dong.jpeg?auto=compress&cs=tinysrgb&w=600&lazy=load"
+                                    src={
+                                        user?.picturePath
+                                            ? `http://localhost:3001/assets/${user?.picturePath}`
+                                            : '/no-avatar.png'
+                                    }
                                     width={40}
                                     height={40}
                                     className="w-10 h-10 object-cover rounded-full"
@@ -122,7 +126,7 @@ const AddPost = () => {
                             </div>
                         </div>
                         <div className="">
-                            <p className="font-semibold">{userParse?.name}</p>
+                            <p className="font-semibold">{user?.name}</p>
                             <Controller
                                 name="typePost"
                                 control={control}
