@@ -9,7 +9,9 @@ export const API_ENDPOINT = {
     NOT_FRIEND: "users/not-friend",
     ADD_FRIEND: "users/add-friend",
     FRIEND: "users/friends",
+    REMOVE_FRIEND: "users/remove-friend",
     REQUESTER: "users/requester",
+    RECIPIENT: "users/recipient",
     ACCEPT_FRIEND: "users/accept-friend",
 
     FOLLOWING_AND_FRIEND: "posts/following-and-friend",

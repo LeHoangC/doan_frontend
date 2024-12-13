@@ -10,23 +10,15 @@ import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { useAuthStore } from '@/store'
+import axios from 'axios'
 
 type FormLogin = {
     email: string
     password: string
 }
 
-type FormRegister = {
-    name: string
-    email: string
-    password: string
-}
-
 const Auth = () => {
-    const [isActive, setIsActive] = useState(false)
     const [isShowPass, setIsShowPass] = useState(false)
-    const { mutate: login } = useLogin()
-    const { mutate: register } = useRegister()
     const { login: loginStore } = useAuthStore()
 
     const router = useRouter()
@@ -39,116 +31,86 @@ const Auth = () => {
         resolver: yupResolver(loginValidationSchema),
     })
 
-    const {
-        register: registerRegister,
-        handleSubmit: handleSubmitRegister,
-        formState: { errors: errorsRegister },
-    } = useForm<FormRegister>({
-        resolver: yupResolver(registerValidationSchema),
-    })
-
-    const handleChangeLayout = () => setIsActive((prev) => !prev)
-
-    const onSubmitLogin = ({ email, password }: FormLogin) => {
-        login(
-            { email, password },
-            {
-                onSuccess: ({ metadata }) => {
-                    loginStore(metadata)
-                    router.replace('/')
-                },
-                onError: (errors: any) => {
-                    toast.error(errors?.response.data.message)
-                },
-            }
-        )
-    }
-
-    const onSubmitRegister = ({ email, password, name }: FormRegister) => {
-        register(
-            { email, password, name },
-            {
-                onSuccess: ({ metadata }) => {
-                    loginStore(metadata)
-                    router.replace('/')
-                },
-                onError: (errors: any) => {
-                    toast.error(errors?.response.data.message)
-                },
-            }
-        )
+    const onSubmitLogin = async ({ email, password }: FormLogin) => {
+        await axios
+            .post('https://hoangcuong.hoangcuong.cloud/auth/login', { email, password })
+            .then(({ data }) => {
+                loginStore(data.metadata)
+                router.replace('/')
+            })
+            .catch((errors) => toast.error(errors?.response.data.message))
     }
 
     return (
-        <div className="wrapper-auth">
-            <div className={`container ${isActive ? 'active' : ''}`}>
-                <div className="form-container sign-up">
-                    <form
-                        onSubmit={handleSubmitRegister(onSubmitRegister)}
-                        className="bg-white flex items-center justify-center flex-col px-10 h-full"
-                    >
-                        <h1 className="font-semibold text-xl mb-4">Đăng ký tài khoản</h1>
-                        <input type="text" placeholder="Name" {...registerRegister('name')} />
-                        <span className="self-start text-xs px-2 text-red-500 mb-1">
-                            {errorsRegister?.name?.message}
-                        </span>
-                        <input type="email" placeholder="Email" {...registerRegister('email')} />
-                        <span className="self-start text-xs px-2 text-red-500 mb-1">
-                            {errorsRegister?.email?.message}
-                        </span>
-                        <input type="password" placeholder="Password" {...registerRegister('password')} />
-                        <span className="self-start text-xs px-2 text-red-500 mb-1">
-                            {errorsRegister?.password?.message}
-                        </span>
-                        <button>Đăng ký</button>
-                    </form>
-                </div>
-                <div className="form-container sign-in">
-                    <form
-                        onSubmit={handleSubmitLogin(onSubmitLogin)}
-                        className="bg-white flex items-center justify-center flex-col px-10 h-full"
-                    >
-                        <h1 className="font-semibold text-xl mb-4">Đăng nhập</h1>
-                        <input type="email" placeholder="Email" {...registerLogin('email')} />
-                        <span className="self-start text-xs px-2 text-red-500 mb-1">{errorsLogin?.email?.message}</span>
-                        <div className="w-full relative">
-                            <input
-                                type={isShowPass ? 'text' : 'password'}
-                                placeholder="Password"
-                                {...registerLogin('password')}
-                            />
-                            <span
-                                className="absolute top-[50%] translate-y-[-50%] right-3"
-                                onClick={() => setIsShowPass(!isShowPass)}
-                            >
-                                {isShowPass ? <FiEyeOff /> : <FiEye />}
-                            </span>
-                        </div>
-                        <span className="self-start text-xs px-2 text-red-500 mb-1">
-                            {errorsLogin?.password?.message}
-                        </span>
-                        <Link href="#" className="text-gray-600 text-sm my-[15px] mb-[10px]">
-                            Quên mật khẩu?
-                        </Link>
-                        <button>Đăng nhập</button>
-                    </form>
-                </div>
-                <div className="toggle-container">
-                    <div className="toggle">
-                        <div className="toggle-panel toggle-left">
-                            <h1>Bạn đã có tài khoản?</h1>
-                            <p className="text-sm tracking-[0.3px] my-5">
-                                Nhập thông tin cá nhân của bạn để sử dụng tất cả các tính năng của trang web
+        <div className="bg-gray-300 font-[sans-serif]">
+            <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
+                <div className="max-w-md w-full">
+                    <a href="javascript:void(0)">
+                        <img src="/logo.png" alt="logo" className="w-40 mb-8 mx-auto block" />
+                    </a>
+
+                    <div className="p-8 rounded-2xl bg-white shadow">
+                        <h2 className="text-gray-800 text-center text-2xl font-bold">Đăng nhập</h2>
+                        <form className="mt-8 space-y-4" onSubmit={handleSubmitLogin(onSubmitLogin)}>
+                            <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Email</label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        {...registerLogin('email')}
+                                        type="text"
+                                        required
+                                        className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                                        placeholder="Enter user name"
+                                    />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="text-gray-800 text-sm mb-2 block">Mật khẩu</label>
+                                <div className="relative flex items-center">
+                                    <input
+                                        {...registerLogin('password')}
+                                        type={isShowPass ? 'text' : 'password'}
+                                        required
+                                        className="w-full text-gray-800 text-sm border border-gray-300 px-4 py-3 rounded-md outline-blue-600"
+                                        placeholder="Enter password"
+                                    />
+                                    <span
+                                        className="absolute top-[50%] translate-y-[-50%] right-3"
+                                        onClick={() => setIsShowPass(!isShowPass)}
+                                    >
+                                        {isShowPass ? <FiEyeOff /> : <FiEye />}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="text-sm">
+                                <a
+                                    href="jajvascript:void(0);"
+                                    className="text-blue-600 hover:underline font-semibold select-none"
+                                >
+                                    Quên mật khẩu?
+                                </a>
+                            </div>
+
+                            <div className="!mt-8">
+                                <button
+                                    type="submit"
+                                    className="w-full py-3 px-4 text-sm tracking-wide rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none"
+                                >
+                                    Đăng nhập
+                                </button>
+                            </div>
+                            <p className="text-gray-800 text-sm !mt-8 text-center">
+                                Don't have an account?{' '}
+                                <Link
+                                    href="/register"
+                                    className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold"
+                                >
+                                    Register here
+                                </Link>
                             </p>
-                            <button onClick={handleChangeLayout}>Đăng nhập</button>
-                        </div>
-                        <div className="toggle-panel toggle-right">
-                            <h1>Bạn chưa có tài khoản?</h1>
-                            <p className="text-sm tracking-[0.3px] my-5">
-                                Đăng ký thông tin cá nhân của bạn để sử dụng tất cả các tính năng của trang web
-                            </p>
-                            <button onClick={handleChangeLayout}>Đăng ký</button>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>

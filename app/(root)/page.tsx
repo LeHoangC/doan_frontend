@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 
 const Home = () => {
     return (
-        <div className="bg-black px-4 md:px-10 lg:px-12 xl:px-20 2xl:px-32">
-            <div className="flex gap-6 pt-6">
+        <div className="px-4 md:px-10 lg:px-12 xl:px-20 2xl:px-32 min-h-screen">
+            <div className="flex gap-20 pt-6">
                 <div className="hidden top-24 xl:block w-[20%]">
                     <LeftMenu type="home" />
                 </div>

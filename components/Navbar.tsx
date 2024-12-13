@@ -38,9 +38,9 @@ const Navbar = () => {
                         <span>Bạn bè</span>
                     </Link>
                 </div>
-                <div className="hidden xl:flex p-2 bg-slate-100 items-center rounded-md">
+                {/* <div className="hidden xl:flex p-2 bg-slate-100 items-center rounded-md">
                     <input type="text" placeholder="Tìm kiếm..." className="bg-transparent outline-none" />
-                </div>
+                </div> */}
             </div>
             <div className="w-[40%] flex items-center gap-4 xl:gap-8 text-white justify-end">
                 <Image

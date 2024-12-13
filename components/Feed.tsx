@@ -37,8 +37,16 @@ const Feed = () => {
         }
     }, [inView])
 
+    if (!data || data.pages.every((page) => page?.data.metadata.length === 0)) {
+        return (
+            <p className="text-center font-semibold text-xl text-white">
+                Hiện chưa có bài viết nào trên bảng tin của bạn.
+            </p>
+        )
+    }
+
     return (
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
             {data?.pages.map((page) =>
                 page?.data.metadata.map((post: PostType) => <Post key={post._id} data={post} />)
             )}

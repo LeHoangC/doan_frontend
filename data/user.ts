@@ -26,6 +26,21 @@ export function useRegister() {
     return mutation
 }
 
+export function useDeleteFriend() {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async ({ friendId }: { friendId: string }) => {
+            const response = await axiosInstance.post(API_ENDPOINT.REMOVE_FRIEND, { friendId })
+            return response.data
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.FRIEND] })
+        }
+    })
+
+    return mutation
+}
+
 export function useLogout() {
     const router = useRouter()
     return useMutation({
@@ -123,6 +138,7 @@ export function useAcceptFriend() {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.NOT_FRIEND] })
+            queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.REQUESTER] })
             queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.FOLLOWING_AND_FRIEND] })
         }
     })
@@ -142,6 +158,27 @@ export function useFriends({ id }: { id: string }) {
     })
 }
 
+export function useRecipients({ id }: { id: string }) {
+    const fetchData = async () => {
+        return (await axiosInstance.get(`${API_ENDPOINT.RECIPIENT}/${id}`)).data
+    }
+
+    return useQuery({
+        queryKey: [API_ENDPOINT.FRIEND],
+        queryFn: fetchData,
+    })
+}
+
+export function useRequests({ id }: { id: string }) {
+    const fetchData = async () => {
+        return (await axiosInstance.get(`${API_ENDPOINT.REQUESTER}/${id}`)).data
+    }
+
+    return useQuery({
+        queryKey: [API_ENDPOINT.REQUESTER],
+        queryFn: fetchData,
+    })
+}
 
 export function useCreateConversation() {
     const mutation = useMutation({

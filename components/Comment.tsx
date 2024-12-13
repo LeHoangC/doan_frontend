@@ -62,8 +62,8 @@ const Comment = ({ data }: { data: any }) => {
                     className="w-10 h-10 rounded-full"
                 />
                 <div className="flex flex-col gap-1 text-white flex-1">
-                    <span className="font-medium">{data?.comment_userId?.name}</span>
-                    <p className="text-sm break-words">{data.comment_content}</p>
+                    <span className="font-medium text-lg">{data?.comment_userId?.name}</span>
+                    <p className="text-base break-words">{data.comment_content}</p>
                     {/* <ol className="border-s border-neutral-300 dark:border-neutral-500"> */}
                     <div className="flex flex-col text-xs text-gray-500 mt-2">
                         <div className="flex items-center gap-4">
@@ -110,11 +110,13 @@ const Comment = ({ data }: { data: any }) => {
                         <FiMoreHorizontal className="cursor-pointer" size={16} />
                     </div>
                     <ul tabIndex={0} className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-max shadow">
-                        <li>
-                            <a>
-                                Báo cáo bình luận này <TbMessageReportFilled />
-                            </a>
-                        </li>
+                        {user?._id !== data.comment_userId._id && (
+                            <li className="text-black">
+                                <a>
+                                    Báo cáo bình luận này <TbMessageReportFilled />
+                                </a>
+                            </li>
+                        )}
                         {user?._id === data.comment_userId._id && (
                             <li className="text-red-400">
                                 <button onClick={() => handleDeleteComment(data._id)}>

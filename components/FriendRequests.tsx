@@ -18,15 +18,15 @@ const FriendRequests = () => {
     }
 
     return (
-        <div className="p-4 bg-white rounded-lg shadow-md text-sm flex flex-col gap-4">
+        <div className="p-4 bg-[#1f1f1f] rounded-lg shadow-md text-sm flex flex-col gap-4">
             <div className="flex justify-between items-center font-medium">
                 <span className="text-gray-500">Yêu cầu kết bạn</span>
-                <Link href="/" className="text-blue-500 text-sm">
+                <Link href="/friends/requests" className="text-white text-sm hover:underline">
                     Xem tất cả
                 </Link>
             </div>
             {data?.metadata.map((item: any) => (
-                <div key={item._id} className="flex items-center gap-4 justify-between">
+                <div key={item._id} className="flex border-b-[0.5px] rounded-md text-white gap-4 p-4">
                     <div className="flex items-center gap-2">
                         <Image
                             src={
@@ -35,20 +35,19 @@ const FriendRequests = () => {
                                     : '/no-avatar.png'
                             }
                             alt=""
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 rounded-full object-cover"
+                            width={48}
+                            height={48}
+                            className="w-12 h-12 rounded-full object-cover"
                         />
-                        <span className="font-semibold">{item.name}</span>
                     </div>
-                    <div className="flex justify-end">
-                        <IoIosCheckmarkCircle
-                            size={20}
-                            color="blue"
-                            className="cursor-pointer"
-                            onClick={() => handleAcceptFriend(item._id)}
-                        />
-                        <IoIosCloseCircle size={20} className="cursor-pointer" />
+                    <div className="flex flex-col">
+                        <span className="font-semibold text-lg">{item.name}</span>
+                        <div className="flex gap-2">
+                            <button className="bg-primary p-2 rounded-md " onClick={() => handleAcceptFriend(item._id)}>
+                                Chấp nhận
+                            </button>
+                            <button className="bg-gray-200 text-black py-2 px-4 rounded-md">Xóa</button>
+                        </div>
                     </div>
                 </div>
             ))}

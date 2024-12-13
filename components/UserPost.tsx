@@ -38,7 +38,7 @@ const UserPost = ({ userSlug }: { userSlug: string }) => {
     }
 
     return (
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
             {data?.pages.map((page) =>
                 page?.data.metadata.map((post: PostType) => <Post key={post._id} data={post} />)
             )}

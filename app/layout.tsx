@@ -26,8 +26,8 @@ export default function RootLayout({
     return (
         <QueryClientProvider client={queryClient}>
             <html lang="en">
-                <body className="w-full flex justify-center">
-                    <div className="w-full max-w-[1536px]">{children}</div>
+                <body className="w-full bg-black flex justify-center">
+                    <div className="w-full">{children}</div>
                     <ToastContainer autoClose={3000} />
                     <ReactQueryDevtools initialIsOpen={false} />
                 </body>

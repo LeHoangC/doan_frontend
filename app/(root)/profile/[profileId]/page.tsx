@@ -61,6 +61,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
     }
 
     const { mutate: updateUser } = useUpdateUser()
+    const { updateUser: updateUserStore } = useAuthStore()
 
     const handlePickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
@@ -72,9 +73,11 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
             formData.append('picture', file)
 
             mutate(formData, {
-                onSuccess: () => {
+                onSuccess: (data) => {
+                    updateUserStore({ picturePath: data.metadata })
                     queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.USER, profileId] })
                     queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.POST, profileId] })
+                    queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.COMMENT] })
                 },
             })
         }
@@ -172,7 +175,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                         </div>
                         {user?.slug !== profileId && (
                             <button
-                                className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+                                className="bg-primary text-white px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
                                 onClick={() => addFriend({ receiverId: metadata._id })}
                             >
                                 <AiOutlinePlus />
@@ -183,7 +186,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                 </div>
                 <div className="flex space-x-2 items-center">
                     {user?.slug === profileId && (
-                        <button className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2">
+                        <button className="bg-primary text-white px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2">
                             <AiOutlinePlus />
                             Thêm vào tin
                         </button>
@@ -206,7 +209,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                     defaultChecked
                 />
                 <div role="tabpanel" className="tab-content mt-10">
-                    <div className="md:flex gap-2">
+                    <div className="md:flex gap-20">
                         <div className="md:w-2/5 border border-gray-600 rounded-md sticky top-28 h-fit space-y-4 p-4 text-white">
                             <h2 className="text-2xl font-semibold">Giới thiệu</h2>
                             <div className="flex items-center gap-2">
@@ -292,7 +295,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                                 </button>
                                 <button
                                     type="submit"
-                                    className="inline-block rounded bg-blue-500 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
+                                    className="inline-block rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-primary-3 transition duration-150 ease-in-out hover:bg-primary-accent-300 hover:shadow-primary-2 focus:bg-primary-accent-300 focus:shadow-primary-2 focus:outline-none focus:ring-0 active:bg-primary-600 active:shadow-primary-2 motion-reduce:transition-none dark:shadow-black/30 dark:hover:shadow-dark-strong dark:focus:shadow-dark-strong dark:active:shadow-dark-strong"
                                 >
                                     Cập nhật
                                 </button>

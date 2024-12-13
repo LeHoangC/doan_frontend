@@ -1,5 +1,5 @@
 'use client'
-import { useFollowing } from '@/data/user'
+import { useFriends } from '@/data/user'
 import { useAuthStore } from '@/store'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -7,7 +7,7 @@ import React from 'react'
 
 const ProfileCard = () => {
     const { user } = useAuthStore()
-    const { data } = useFollowing({ id: user?._id! })
+    const { data } = useFriends({ id: user?._id! })
 
     return (
         <div className="p-4 bg-[#1f1f1f] rounded-lg shadow-md text-white text-sm flex flex-col gap-6">
@@ -23,8 +23,8 @@ const ProfileCard = () => {
             </div>
             <div className="mt-4 flex flex-col items-center gap-2 justify-center">
                 <p className="font-semibold">{user?.name}</p>
-                <span className="block">{data?.metadata.length} Người theo dõi</span>
-                <Link href={`profile/${user?.slug}`} className="bg-blue-500 text-white px-3 py-2 rounded-md">
+                <span className="block">{data?.metadata.length} bạn bè</span>
+                <Link href={`profile/${user?.slug}`} className="bg-primary text-white px-3 py-2 rounded-md">
                     Hồ sơ
                 </Link>
             </div>

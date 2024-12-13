@@ -97,7 +97,7 @@ const Sidebar = () => {
                         />
                     </div>
                 </div>
-                <h2 className="text-lg font-bold">{user?.name}</h2>
+                <h2 className="text-lg font-bold text-white">{user?.name}</h2>
             </div>
 
             <input
@@ -218,7 +218,7 @@ const ChatMessages = () => {
             {data?.metadata?.map((message: any) => {
                 return (
                     <div
-                        className={`chat chat-${message.sender === selectedUser?._id ? 'start' : 'end'}`}
+                        className={`chat ${message.sender === selectedUser?._id ? 'chat-start' : 'chat-end'}`}
                         key={message._id}
                         ref={scrollRef}
                     >
@@ -235,7 +235,7 @@ const Message = ({ message }: { message: any }) => {
     const time = moment(message.createdAt).fromNow()
     return (
         <div onClick={() => setIsClickMessage((prev) => !prev)}>
-            <div className="chat-bubble">{message.text}</div>
+            <div className="chat-bubble px-2">{message.text}</div>
             <div className="chat-footer">{isClickMessage && <time className="text-xs opacity-70">{time}</time>}</div>
         </div>
     )

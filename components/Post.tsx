@@ -85,7 +85,7 @@ const Post = ({ data }: { data: any }) => {
             </div>
             {/* POST */}
             <div className="flex flex-col gap-4">
-                <p className="text-white">{post_content}</p>
+                <p className="text-white text-lg">{post_content}</p>
                 {post_picturePath && (
                     <div className="w-full min-h-96 relative">
                         <Image src={post_picturePath} alt="image post" fill className="object-fill rounded-md" />
@@ -97,11 +97,7 @@ const Post = ({ data }: { data: any }) => {
                 <div className="flex gap-6">
                     <div className="flex items-center gap-3 text-white p-2 rounded-xl cursor-pointer">
                         <div onClick={handleLike}>
-                            {isLike ? (
-                                <AiFillLike size={16} color="blue" />
-                            ) : (
-                                <AiOutlineLike size={18} className="cursor-pointer" />
-                            )}
+                            {isLike ? <AiFillLike size={16} /> : <AiOutlineLike size={18} className="cursor-pointer" />}
                         </div>
                         <span className="text-gray-300 select-none">|</span>
                         <span className="text-gray-500 text-[14px]">

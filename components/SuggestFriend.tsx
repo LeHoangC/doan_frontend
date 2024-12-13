@@ -30,15 +30,15 @@ const SuggestFriend = () => {
                                     : '/no-avatar.png'
                             }
                             alt=""
-                            width={40}
-                            height={40}
-                            className="w-10 h-10 rounded-full object-cover"
+                            width={48}
+                            height={48}
+                            className="w-12 h-12 rounded-full object-cover"
                         />
                     </Link>
                     <div className="flex flex-col">
-                        <span className="font-medium text-base mb-1">{item.name}</span>
+                        <span className="font-medium text-lg mb-1">{item.name}</span>
                         <div className="flex gap-2">
-                            <button className="bg-blue-500 p-2 rounded-md " onClick={() => handleAddFriend(item._id)}>
+                            <button className="bg-primary p-2 rounded-md " onClick={() => handleAddFriend(item._id)}>
                                 Thêm bạn bè
                             </button>
                             <button className="bg-gray-200 text-black py-2 px-4 rounded-md">Xóa</button>
