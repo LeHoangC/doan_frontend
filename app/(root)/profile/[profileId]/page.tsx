@@ -1,5 +1,5 @@
 'use client'
-import { MouseEventHandler, use } from 'react'
+import { use } from 'react'
 import { useAddFriend, useProfile, useUpdateUser, useUploadAvatar } from '@/data/user'
 import Image from 'next/image'
 import React, { useRef } from 'react'
@@ -35,6 +35,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
     const { profileId } = use(params)
 
     const { data: { metadata } = {} } = useProfile({ slug: profileId })
+    const { data: { metadata: currentUser } = {} } = useProfile({ slug: user?.slug! })
     const { mutate } = useUploadAvatar()
 
     const openModalAvatar = () => {
@@ -92,7 +93,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
 
     const genderEnum = {
         male: 'Nam',
-        famale: 'Nữ',
+        female: 'Nữ',
         other: 'Khác',
     }
 
@@ -173,16 +174,17 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                                 </div>
                             ))}
                         </div>
-                        {user?.slug !== profileId && (
+                    </div>
+                    {user?.slug !== profileId &&
+                        !currentUser?.friends?.map((item: any) => item._id).includes(metadata?._id) && (
                             <button
-                                className="bg-primary text-white px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+                                className="bg-primary text-white ml-4 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"
                                 onClick={() => addFriend({ receiverId: metadata._id })}
                             >
                                 <AiOutlinePlus />
                                 Thêm bạn bè
                             </button>
                         )}
-                    </div>
                 </div>
                 <div className="flex space-x-2 items-center">
                     {user?.slug === profileId && (
@@ -280,7 +282,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                                     {...register('gender')}
                                 >
                                     <option value="male">Nam</option>
-                                    <option value="famale">Nữ</option>
+                                    <option value="female">Nữ</option>
                                     <option value="other">Khác</option>
                                 </select>
                             </div>

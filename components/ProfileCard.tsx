@@ -1,5 +1,5 @@
 'use client'
-import { useFriends } from '@/data/user'
+import { useFriends, useProfile } from '@/data/user'
 import { useAuthStore } from '@/store'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -7,14 +7,14 @@ import React from 'react'
 
 const ProfileCard = () => {
     const { user } = useAuthStore()
+    const { data: { metadata } = {} } = useProfile({ slug: user?.slug! })
     const { data } = useFriends({ id: user?._id! })
-
     return (
         <div className="p-4 bg-[#1f1f1f] rounded-lg shadow-md text-white text-sm flex flex-col gap-6">
             <div className="h-20 relative">
                 <Image src="https://picsum.photos/200/300" alt="" fill className="rounded-md" />
                 <Image
-                    src={user?.picturePath ? `http://localhost:3001/assets/${user?.picturePath}` : '/no-avatar.png'}
+                    src={user?.picturePath ? `http://localhost:3001/assets/${metadata?.picturePath}` : '/no-avatar.png'}
                     alt=""
                     width={48}
                     height={48}
@@ -22,7 +22,7 @@ const ProfileCard = () => {
                 />
             </div>
             <div className="mt-4 flex flex-col items-center gap-2 justify-center">
-                <p className="font-semibold">{user?.name}</p>
+                <p className="font-semibold">{metadata?.name}</p>
                 <span className="block">{data?.metadata.length} bạn bè</span>
                 <Link href={`profile/${user?.slug}`} className="bg-primary text-white px-3 py-2 rounded-md">
                     Hồ sơ

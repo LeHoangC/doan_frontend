@@ -2,7 +2,7 @@ import { useAuthStore } from "@/store";
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 
 export const axiosInstance = axios.create({
-    baseURL: 'https://hoangcuong.hoangcuong.cloud',
+    baseURL: 'http://localhost:3001/v1/api',
     headers: {
         // 'Content-Type': 'application/json'
     },

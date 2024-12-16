@@ -29,6 +29,11 @@ const CardUser = ({
                 />
             </Link>
             <span className="font-semibold text-base ml-2 text-white">{data?.name}</span>
+            <div className="flex-grow">
+                {!!data?.commonFriendsCount && (
+                    <span className="font-medium text-base ml-2 text-white">{data?.commonFriendsCount} bạn chung</span>
+                )}
+            </div>
             {title && handlebtnTitle && (
                 <button className="btn btn-primary" onClick={() => handlebtnTitle(data._id)}>
                     {title}

@@ -18,8 +18,12 @@ type AddPostFormData = {
 }
 
 const AddPost = () => {
-    const modalRef = useRef<HTMLDialogElement>(null)
+    const modalFormCreate = useRef<HTMLDialogElement>(null)
+    const modalGenCaption = useRef<HTMLDialogElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
+
+    const [textInputAi, setTextInputAi] = useState('')
+    const [content, setContent] = useState('')
 
     const { user } = useAuthStore()
 
@@ -56,25 +60,56 @@ const AddPost = () => {
         }
     }
 
-    const openModal = () => {
-        if (modalRef.current) {
-            modalRef.current.showModal()
+    const openModalFormCreate = () => {
+        if (modalFormCreate.current) {
+            modalFormCreate.current.showModal()
         }
     }
 
-    const closeModal = () => {
-        if (modalRef.current) {
-            modalRef.current.close()
+    const closeModalFormCreate = () => {
+        if (modalFormCreate.current) {
+            modalFormCreate.current.close()
         }
         reset({ contentPost: '', typePost: 'public', imageChose: null })
         setImageChose(null)
     }
 
+    const openModalGenCaption = () => {
+        if (modalGenCaption.current) {
+            modalGenCaption.current.showModal()
+        }
+    }
+
+    const closeModalGenCaption = () => {
+        if (modalGenCaption.current) {
+            modalGenCaption.current.close()
+        }
+        setContent('')
+        setTextInputAi('')
+    }
+
     useEffect(() => {
         if (isSuccess) {
-            closeModal()
+            closeModalFormCreate()
         }
     }, [isSuccess])
+
+    const handleGenTextToAi = async () => {
+        setContent('')
+        const response = await fetch(`http://localhost:3001/v1/api/posts/gen-caption?prompt=${textInputAi}`, {
+            headers: {
+                'Content-Type': 'text/event-stream',
+            },
+        })
+
+        const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader()
+
+        while (true) {
+            const { value, done } = await reader?.read()
+            if (done) break
+            setContent((prev) => prev + value)
+        }
+    }
 
     return (
         <div>
@@ -93,18 +128,18 @@ const AddPost = () => {
                             readOnly
                             placeholder="Bạn đang nghĩ gì?"
                             className="flex-1 border-white bg-transparent rounded-lg px-2 py-3"
-                            onClick={openModal}
+                            onClick={openModalFormCreate}
                         />
                     </div>
                 </div>
             </div>
 
-            <dialog className="modal" ref={modalRef}>
+            <dialog className="modal" ref={modalFormCreate}>
                 <form className="modal-box" onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center justify-between">
                         <p></p>
                         <p className="text-2xl font-bold">Tạo bài viết</p>
-                        <span className="cursor-pointer" onClick={closeModal}>
+                        <span className="cursor-pointer" onClick={closeModalFormCreate}>
                             <IoCloseSharp size={24} />
                         </span>
                     </div>
@@ -140,6 +175,44 @@ const AddPost = () => {
                                     </select>
                                 )}
                             />
+                        </div>
+                        <div className="ml-auto">
+                            <button type="button" className="btn btn-primary btn-sm" onClick={openModalGenCaption}>
+                                Tạo caption bằng AI
+                            </button>
+
+                            <dialog ref={modalGenCaption} className="modal">
+                                <div className="modal-box flex flex-col w-11/12 max-w-5xl max-h-[540px]">
+                                    <div className="flex">
+                                        <input
+                                            type="text"
+                                            className="w-full border-none outline-none px-2"
+                                            placeholder="Nhập nội dung"
+                                            value={textInputAi}
+                                            onChange={(e) => setTextInputAi(e.target.value)}
+                                        />
+                                        <button
+                                            type="button"
+                                            className="btn text-sm font-normal btn-primary btn-sm"
+                                            onClick={handleGenTextToAi}
+                                        >
+                                            Tạo
+                                        </button>
+                                    </div>
+                                    <div className="divider"></div>
+                                    <p className="py-4">{content}</p>
+                                    <div className="divider"></div>
+                                    <div className="ml-auto">
+                                        <button
+                                            type="button"
+                                            className="btn text-white btn-error"
+                                            onClick={closeModalGenCaption}
+                                        >
+                                            Hủy
+                                        </button>
+                                    </div>
+                                </div>
+                            </dialog>
                         </div>
                     </div>
 
@@ -200,7 +273,7 @@ const AddPost = () => {
                         </button>
                     </div>
                 </form>
-                <form method="dialog" className="modal-backdrop" onSubmit={closeModal}>
+                <form method="dialog" className="modal-backdrop" onSubmit={closeModalFormCreate}>
                     <button>close</button>
                 </form>
             </dialog>

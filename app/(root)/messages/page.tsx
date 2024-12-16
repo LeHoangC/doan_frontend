@@ -1,6 +1,6 @@
 'use client'
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
-import { useCreateConversation, useCreateNewMessage, useFriends, useMessages } from '@/data/user'
+import { useCreateConversation, useCreateNewMessage, useFriends } from '@/data/user'
 import Image from 'next/image'
 import { IoSend } from 'react-icons/io5'
 import { useForm } from 'react-hook-form'
@@ -10,6 +10,10 @@ import { io, Socket } from 'socket.io-client'
 import { useQueryClient } from '@tanstack/react-query'
 import { API_ENDPOINT } from '@/data/api-endpoint'
 import { useAuthStore } from '@/store'
+import { IoMdMore } from 'react-icons/io'
+import Peer from 'simple-peer'
+import { useDelMessageMutation, useMessages, useRecallMessageMutation } from '@/data/message'
+import { FaPhone } from 'react-icons/fa'
 
 type SelectedUserContextType = {
     selectedUser: any
@@ -18,6 +22,9 @@ type SelectedUserContextType = {
     setCurrentChat: (user: any) => void
     socket: any
     onlineUser: any
+    roomId: string
+    fromVideo: string
+    isReject: boolean
 }
 
 const SelectedUserContext = createContext<SelectedUserContextType | null>(null)
@@ -40,6 +47,10 @@ const SelectedUserProvider = ({ children }: { children: React.ReactNode }) => {
     const [currentChat, setCurrentChat] = useState(null)
     const [onlineUser, setOnlineUser] = useState([])
 
+    const [roomId, setRoomId] = useState('')
+    const [isReject, setIsReject] = useState(false)
+    const [fromVideo, setFromVideo] = useState('')
+
     useEffect(() => {
         socket.current = io('ws://localhost:3001')
     }, [])
@@ -47,6 +58,16 @@ const SelectedUserProvider = ({ children }: { children: React.ReactNode }) => {
     useEffect(() => {
         socket?.current?.on('getUsers', (data: any) => {
             setOnlineUser(data)
+        })
+        socket?.current?.on('incoming_call', ({ from, roomId }) => {
+            setRoomId(roomId)
+            setFromVideo(from)
+        })
+
+        socket?.current?.on('reject', () => {
+            console.log('reject')
+
+            setIsReject(true)
         })
     }, [])
 
@@ -56,7 +77,17 @@ const SelectedUserProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <SelectedUserContext.Provider
-            value={{ selectedUser, setSelectedUser, currentChat, setCurrentChat, socket, onlineUser }}
+            value={{
+                selectedUser,
+                setSelectedUser,
+                currentChat,
+                setCurrentChat,
+                socket,
+                onlineUser,
+                roomId,
+                fromVideo,
+                isReject,
+            }}
         >
             {children}
         </SelectedUserContext.Provider>
@@ -144,13 +175,13 @@ const Sidebar = () => {
     )
 }
 
-const ChatHeader = () => {
+const ChatHeader = ({ callUser }) => {
     const { selectedUser } = useSelectedUser()
 
     if (!selectedUser) return null
 
     return (
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex justify-between">
             <div className="flex items-center gap-4">
                 <Image
                     width={48}
@@ -168,11 +199,14 @@ const ChatHeader = () => {
                     {/* <p className="text-sm text-gray-500">Grateful for every sunrise and sunset 🌅</p> */}
                 </div>
             </div>
+            <div className="cursor-pointer" onClick={() => callUser(selectedUser._id)}>
+                <FaPhone size={20} />
+            </div>
         </div>
     )
 }
 
-const ChatWindow = () => {
+const ChatWindow = ({ callUser }) => {
     const { selectedUser } = useSelectedUser()
     if (!selectedUser)
         return (
@@ -187,7 +221,7 @@ const ChatWindow = () => {
         )
     return (
         <div className="flex flex-col h-full bg-slate-100">
-            <ChatHeader />
+            <ChatHeader callUser={callUser} />
             <ChatMessages />
             <ChatInput />
         </div>
@@ -200,6 +234,8 @@ const ChatMessages = () => {
     const scrollRef = useRef<HTMLDivElement | null>(null)
     const { currentChat, selectedUser, socket } = useSelectedUser()
     const { data } = useMessages({ conversationId: currentChat?._id })
+    const { mutate: recallMessage } = useRecallMessageMutation()
+    const { mutate: delMessage } = useDelMessageMutation()
 
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -218,10 +254,33 @@ const ChatMessages = () => {
             {data?.metadata?.map((message: any) => {
                 return (
                     <div
-                        className={`chat ${message.sender === selectedUser?._id ? 'chat-start' : 'chat-end'}`}
+                        className={`chat ${
+                            message.sender === selectedUser?._id ? 'chat-start' : 'chat-end'
+                        } group relative`} // Thêm group và relative ở đây
                         key={message._id}
                         ref={scrollRef}
                     >
+                        {/* Hiển thị IoMdMore khi hover vào phần tử cha */}
+                        {message.sender !== selectedUser?._id && (
+                            <div className="dropdown dropdown-end cursor-pointer z-50 mb-2 opacity-0 group-hover:opacity-100 transition-opacity absolute right-0 top-1/2 transform -translate-y-1/2">
+                                <div tabIndex={0}>
+                                    <IoMdMore size={20} />
+                                </div>
+                                <ul
+                                    tabIndex={0}
+                                    className="menu dropdown-content bg-base-100 rounded-box z-[1] mt-4 w-max shadow"
+                                >
+                                    {!message?.isRecall && (
+                                        <li onClick={() => recallMessage(message._id)}>
+                                            <a>Thu hồi</a>
+                                        </li>
+                                    )}
+                                    <li onClick={() => delMessage(message._id)}>
+                                        <a>Xóa</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        )}
                         <Message message={message} />
                     </div>
                 )
@@ -234,8 +293,14 @@ const Message = ({ message }: { message: any }) => {
     const [isClickMessage, setIsClickMessage] = useState(false)
     const time = moment(message.createdAt).fromNow()
     return (
-        <div onClick={() => setIsClickMessage((prev) => !prev)}>
-            <div className="chat-bubble px-2">{message.text}</div>
+        <div onClick={() => setIsClickMessage((prev) => !prev)} className="mr-2">
+            {message?.isRecall ? (
+                <>
+                    <div className="bg-gray-400 p-2 rounded-xl mr-2">Tin nhắn đã được thu hồi</div>
+                </>
+            ) : (
+                <div className="chat-bubble pr-6">{message.text}</div>
+            )}
             <div className="chat-footer">{isClickMessage && <time className="text-xs opacity-70">{time}</time>}</div>
         </div>
     )
@@ -277,20 +342,160 @@ const ChatInput = () => {
 }
 
 const Messages = () => {
+    const { user } = useAuthStore()
+    const [inCall, setInCall] = useState(false)
+
+    const randomRoomId = Math.floor(Math.random() * 900000000) + 100000000
+
+    const { socket, roomId, fromVideo, isReject, selectedUser } = useSelectedUser()
+
+    const localVideo = useRef()
+    const remoteVideo = useRef()
+    const peerRef = useRef()
+
+    const createPeer = (initiator, stream) => {
+        return new Peer({
+            initiator, // Đúng cho một peer duy nhất
+            trickle: false,
+            stream,
+        })
+    }
+
+    const endCall = () => {
+        if (peerRef.current) {
+            peerRef.current.destroy() // Đóng kết nối WebRTC
+            peerRef.current = null
+        }
+
+        if (localVideo.current) {
+            localVideo.current.srcObject.getTracks().forEach((track) => track.stop())
+        }
+
+        setInCall(false)
+    }
+
+    useEffect(() => {
+        isReject && endCall()
+    }, [isReject])
+
+    console.log(isReject)
+
+    const joinRoom = () => {
+        setInCall(true)
+        // Bắt đầu lấy stream từ camera
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then((stream) => {
+            if (localVideo.current) localVideo.current.srcObject = stream
+
+            const peer = createPeer(true, stream)
+
+            peer.on('signal', (signal) => {
+                socket.current.emit('send_signal', { signal, room: roomId || randomRoomId })
+            })
+
+            peer.on('stream', (stream) => {
+                if (remoteVideo.current) remoteVideo.current.srcObject = stream
+            })
+
+            peer.on('error', (err) => {
+                endCall()
+            })
+
+            peer.on('close', () => {
+                endCall()
+            })
+
+            socket.current.on('receive_signal', (data) => {
+                if (peerRef.current) {
+                    const peerConnection = peerRef.current._pc
+                    if (peerConnection.signalingState === 'stable') {
+                        console.warn('Cannot set remote description: already stable')
+                        return
+                    }
+                    peerRef.current.signal(data.signal)
+                }
+            })
+
+            peerRef.current = peer
+        })
+    }
+
+    const callUser = (target) => {
+        joinRoom()
+        socket.current.emit('call_user', { from: user?.name, to: target, roomId: randomRoomId })
+    }
+
+    const modalRef = useRef<HTMLDialogElement>(null)
+
+    const openModal = () => {
+        if (modalRef.current) {
+            modalRef.current.showModal()
+        }
+    }
+
+    const closeModal = () => {
+        if (modalRef.current) {
+            modalRef.current.close()
+        }
+    }
+
+    const acceptCall = () => {
+        closeModal()
+        joinRoom()
+    }
+
+    const rejectCall = () => {
+        closeModal()
+        socket.current.emit('reject', { to: selectedUser?._id })
+    }
+
+    if (roomId && fromVideo) {
+        openModal()
+    }
     return (
-        <SelectedUserProvider>
+        <div className="relative">
             <div className="h-[calc(100vh-96px)]">
                 <div className="h-[90%] flex">
                     <div className="w-1/4 border-r border-gray-300">
                         <Sidebar />
                     </div>
                     <div className="w-3/4">
-                        <ChatWindow />
+                        <ChatWindow callUser={callUser} />
                     </div>
                 </div>
             </div>
+            {inCall && (
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                    <div>
+                        <video ref={localVideo} autoPlay muted className="w-[600px]" />
+                    </div>
+                    <div className="absolute top-0 right-0">
+                        <video ref={remoteVideo} autoPlay className="w-[100px]" />
+                    </div>
+                </div>
+            )}
+            <dialog className="modal" ref={modalRef}>
+                <div className="modal-box">
+                    <p className="py-4">{fromVideo} muốn gọi video với bạn</p>
+                    <div className="flex justify-end gap-4">
+                        <button className="btn btn-sm btn-active" onClick={rejectCall}>
+                            Từ chối
+                        </button>
+                        <button className="btn btn-sm btn-active btn-primary" onClick={acceptCall}>
+                            Chấp nhận
+                        </button>
+                    </div>
+                </div>
+            </dialog>
+        </div>
+    )
+}
+
+const MessageRoot = () => {
+    return (
+        <SelectedUserProvider>
+            <Messages />
         </SelectedUserProvider>
     )
 }
 
-export default Messages
+export default MessageRoot

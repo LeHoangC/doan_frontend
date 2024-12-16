@@ -33,7 +33,7 @@ const Register = () => {
 
     const onSubmitRegister = async ({ email, password, name }: FormRegister) => {
         await axios
-            .post('https://hoangcuong.hoangcuong.cloud/auth/signup', { email, password, name })
+            .post('http://localhost:3001/v1/api/auth/signup', { email, password, name })
             .then(({ data }) => {
                 loginStore(data.metadata)
                 router.replace('/')

@@ -61,7 +61,8 @@ export function useProfile({ slug }: { slug: string }) {
 
     return useQuery({
         queryKey: [API_ENDPOINT.USER, slug],
-        queryFn: fetchData
+        queryFn: fetchData,
+        enabled: !!slug
     })
 }
 
@@ -99,6 +100,7 @@ export function useUserNotFriend({ id }: { id: string }) {
     return useQuery({
         queryKey: [API_ENDPOINT.NOT_FRIEND],
         queryFn: fetchData,
+        enabled: !!id
     })
 }
 
@@ -110,6 +112,7 @@ export function useFriendRequest({ id }: { id: string }) {
     return useQuery({
         queryKey: [API_ENDPOINT.REQUESTER],
         queryFn: fetchData,
+        enabled: !!id
     })
 }
 
@@ -155,6 +158,7 @@ export function useFriends({ id }: { id: string }) {
     return useQuery({
         queryKey: [API_ENDPOINT.FRIEND],
         queryFn: fetchData,
+        enabled: !!id
     })
 }
 
@@ -189,17 +193,6 @@ export function useCreateConversation() {
     })
 
     return mutation
-}
-
-export function useMessages({ conversationId }: { conversationId: string }) {
-    const fetchData = async () => {
-        return (await axiosInstance.get(`${API_ENDPOINT.MESSAGE}/${conversationId}`)).data
-    }
-
-    return useQuery({
-        queryKey: [API_ENDPOINT.MESSAGE, conversationId],
-        queryFn: fetchData,
-    })
 }
 
 export function useCreateNewMessage() {

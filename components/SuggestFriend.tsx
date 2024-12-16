@@ -37,6 +37,9 @@ const SuggestFriend = () => {
                     </Link>
                     <div className="flex flex-col">
                         <span className="font-medium text-lg mb-1">{item.name}</span>
+                        {!!item.commonFriendsCount && (
+                            <span className="font-medium text-sm mb-1">{item.commonFriendsCount} bạn chung</span>
+                        )}
                         <div className="flex gap-2">
                             <button className="bg-primary p-2 rounded-md " onClick={() => handleAddFriend(item._id)}>
                                 Thêm bạn bè

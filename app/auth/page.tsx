@@ -33,7 +33,7 @@ const Auth = () => {
 
     const onSubmitLogin = async ({ email, password }: FormLogin) => {
         await axios
-            .post('https://hoangcuong.hoangcuong.cloud/auth/login', { email, password })
+            .post('http://localhost:3001/v1/api/auth/login', { email, password })
             .then(({ data }) => {
                 loginStore(data.metadata)
                 router.replace('/')
