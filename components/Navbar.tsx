@@ -44,7 +44,7 @@ const Navbar = () => {
             </div>
             <div className="w-[40%] flex items-center gap-4 xl:gap-8 text-white justify-end">
                 <Image
-                    src={user?.picturePath ? `http://localhost:3001/assets/${metadata?.picturePath}` : '/logo.png'}
+                    src={user?.picturePath ? `${metadata?.picturePath}` : '/logo.png'}
                     width={40}
                     height={40}
                     className="w-10 h-10 rounded-full ring-1 ring-white"

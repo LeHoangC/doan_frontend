@@ -19,7 +19,7 @@ const CardUser = ({
         <div className="flex flex-col gap-2 shadow-lg p-2 rounded-md">
             <Link href={`/profile/${data?.slug}`}>
                 <Image
-                    src={data?.picturePath ? `http://localhost:3001/assets/${data?.picturePath}` : '/no-avatar.png'}
+                    src={data?.picturePath ? `${data?.picturePath}` : '/no-avatar.png'}
                     width={0}
                     height={0}
                     sizes="100vw"

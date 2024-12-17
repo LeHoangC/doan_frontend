@@ -134,7 +134,7 @@ const AddPost = () => {
             <div className="p-4 bg-[#1f1f1f] shadow-md rounded-lg flex gap-4 justify-between items-center text-sm">
                 <Image
                     alt="avatar"
-                    src={user?.picturePath ? `http://localhost:3001/assets/${user?.picturePath}` : '/no-avatar.png'}
+                    src={user?.picturePath ? `${user?.picturePath}` : '/no-avatar.png'}
                     width={40}
                     height={40}
                     className="w-10 h-10 object-cover rounded-full"
@@ -167,11 +167,7 @@ const AddPost = () => {
                             <div className="w-12 rounded-full">
                                 <Image
                                     alt="avatar"
-                                    src={
-                                        user?.picturePath
-                                            ? `http://localhost:3001/assets/${user?.picturePath}`
-                                            : '/no-avatar.png'
-                                    }
+                                    src={user?.picturePath ? `${user?.picturePath}` : '/no-avatar.png'}
                                     width={40}
                                     height={40}
                                     className="w-10 h-10 object-cover rounded-full"

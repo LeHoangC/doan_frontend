@@ -50,7 +50,7 @@ const Post = ({ data }: { data: any }) => {
             <div className="flex items-center justify-between">
                 <Link href={`profile/${user.slug}`} className="flex items-center gap-4">
                     <Image
-                        src={user?.picturePath ? `http://localhost:3001/assets/${user?.picturePath}` : '/no-avatar.png'}
+                        src={user?.picturePath ? `${user?.picturePath}` : '/no-avatar.png'}
                         alt=""
                         width={40}
                         height={40}

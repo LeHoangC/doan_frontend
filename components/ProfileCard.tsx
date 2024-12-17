@@ -14,7 +14,7 @@ const ProfileCard = () => {
             <div className="h-20 relative">
                 <Image src="https://picsum.photos/200/300" alt="" fill className="rounded-md" />
                 <Image
-                    src={user?.picturePath ? `http://localhost:3001/assets/${metadata?.picturePath}` : '/no-avatar.png'}
+                    src={user?.picturePath ? `${metadata?.picturePath}` : '/no-avatar.png'}
                     alt=""
                     width={48}
                     height={48}

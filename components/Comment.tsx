@@ -51,11 +51,7 @@ const Comment = ({ data }: { data: any }) => {
         <div className="">
             <div className="flex gap-4 justify-between mt-6">
                 <Image
-                    src={
-                        data?.comment_userId?.picturePath
-                            ? `http://localhost:3001/assets/${data?.comment_userId?.picturePath}`
-                            : '/no-avatar.png'
-                    }
+                    src={data?.comment_userId?.picturePath ? `${data?.comment_userId?.picturePath}` : '/no-avatar.png'}
                     alt=""
                     width={40}
                     height={40}

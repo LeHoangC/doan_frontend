@@ -28,11 +28,7 @@ const FriendRequests = () => {
                 <div key={item._id} className="flex border-b-[0.5px] rounded-md text-white gap-4 p-4">
                     <div className="flex items-center gap-2">
                         <Image
-                            src={
-                                item?.picturePath
-                                    ? `http://localhost:3001/assets/${item?.picturePath}`
-                                    : '/no-avatar.png'
-                            }
+                            src={item?.picturePath ? `${item?.picturePath}` : '/no-avatar.png'}
                             alt=""
                             width={48}
                             height={48}

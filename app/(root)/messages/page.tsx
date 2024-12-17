@@ -120,11 +120,7 @@ const Sidebar = () => {
                             alt=""
                             width={48}
                             height={48}
-                            src={
-                                user?.picturePath
-                                    ? `http://localhost:3001/assets/${user?.picturePath}`
-                                    : '/no-avatar.png'
-                            }
+                            src={user?.picturePath ? `${user?.picturePath}` : '/no-avatar.png'}
                         />
                     </div>
                 </div>
@@ -154,11 +150,7 @@ const Sidebar = () => {
                                     <Image
                                         width={40}
                                         height={40}
-                                        src={
-                                            friend?.picturePath
-                                                ? `http://localhost:3001/assets/${friend?.picturePath}`
-                                                : '/no-avatar.png'
-                                        }
+                                        src={friend?.picturePath ? `${friend?.picturePath}` : '/no-avatar.png'}
                                         alt="Friend avatar"
                                         className="w-10 h-10 rounded-full"
                                     />
@@ -186,11 +178,7 @@ const ChatHeader = ({ callUser }: { callUser: (id: string) => void }) => {
                 <Image
                     width={48}
                     height={48}
-                    src={
-                        selectedUser?.picturePath
-                            ? `http://localhost:3001/assets/${selectedUser?.picturePath}`
-                            : '/no-avatar.png'
-                    }
+                    src={selectedUser?.picturePath ? `${selectedUser?.picturePath}` : '/no-avatar.png'}
                     alt="Chat avatar"
                     className="w-12 h-12 rounded-full"
                 />

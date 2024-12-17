@@ -24,11 +24,7 @@ const SuggestFriend = () => {
                 <div key={item._id} className="flex items-center border-b-[0.5px] gap-2 rounded-md text-white p-4">
                     <Link href={`profile/${item.slug}`}>
                         <Image
-                            src={
-                                item?.picturePath
-                                    ? `http://localhost:3001/assets/${item?.picturePath}`
-                                    : '/no-avatar.png'
-                            }
+                            src={item?.picturePath ? `${item?.picturePath}` : '/no-avatar.png'}
                             alt=""
                             width={48}
                             height={48}

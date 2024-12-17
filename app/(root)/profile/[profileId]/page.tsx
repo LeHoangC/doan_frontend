@@ -103,24 +103,14 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
         <div className="px-4 md:px-10 lg:px-12 xl:px-20 2xl:px-32 bg-black min-h-screen">
             <dialog ref={modalRefAvatar} className="modal w-full">
                 <div className="modal-box h-96">
-                    <Image
-                        src={`http://localhost:3001/assets/${metadata?.picturePath}`}
-                        alt="Profile"
-                        fill
-                        objectFit="contain"
-                    />
+                    <Image src={`${metadata?.picturePath}`} alt="Profile" fill objectFit="contain" />
                 </div>
                 <form method="dialog" className="modal-backdrop">
                     <button>close</button>
                 </form>
             </dialog>
             <div className="relative h-96 w-full">
-                <Image
-                    src={`http://localhost:3001/assets/${metadata?.picturePath}`}
-                    alt="Cover"
-                    objectFit="cover"
-                    fill
-                />
+                <Image src={`${metadata?.picturePath}`} alt="Cover" objectFit="cover" fill />
                 {user?.slug === profileId && (
                     <button className="absolute bottom-4 right-4 bg-white px-4 py-2 rounded-md shadow-md text-sm font-medium">
                         Chỉnh sửa ảnh bìa
@@ -135,11 +125,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                         onClick={openModalAvatar}
                     >
                         <Image
-                            src={
-                                metadata?.picturePath
-                                    ? `http://localhost:3001/assets/${metadata?.picturePath}`
-                                    : '/no-avatar.png'
-                            }
+                            src={metadata?.picturePath ? `${metadata?.picturePath}` : '/no-avatar.png'}
                             alt="avatar"
                             fill
                             className="rounded-full select-none"
@@ -166,11 +152,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                                             width={32}
                                             height={32}
                                             alt=""
-                                            src={
-                                                item?.picturePath
-                                                    ? `http://localhost:3001/assets/${item?.picturePath}`
-                                                    : '/no-avatar.png'
-                                            }
+                                            src={item?.picturePath ? `${item?.picturePath}` : '/no-avatar.png'}
                                         />
                                     </Link>
                                 </div>
