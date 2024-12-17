@@ -5,8 +5,7 @@ export const axiosInstance = axios.create({
     baseURL: 'http://localhost:3001/v1/api',
     headers: {
         // 'Content-Type': 'application/json'
-    },
-    withCredentials: true
+    }
 })
 
 const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
