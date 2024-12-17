@@ -3,7 +3,6 @@ import { useFriendRequest } from '@/data/user'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { IoIosCheckmarkCircle, IoIosCloseCircle } from 'react-icons/io'
 import { useAcceptFriend } from '@/data/user'
 import { useAuthStore } from '@/store'
 

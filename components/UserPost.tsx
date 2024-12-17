@@ -31,7 +31,7 @@ const UserPost = ({ userSlug }: { userSlug: string }) => {
         if (inView) {
             fetchNextPage()
         }
-    }, [inView])
+    }, [inView, fetchNextPage])
 
     if (!data || data.pages.every((page) => page?.data.metadata.length === 0)) {
         return <p className="text-center font-semibold text-xl text-white">Người dùng này chưa có bài viết nào.</p>

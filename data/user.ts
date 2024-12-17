@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/config/axios.config'
-import { AuthResponse, LoginType, RegisterType } from '@/types'
+import { AuthResponse, LoginType, RegisterType, User } from '@/types'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
 import { API_ENDPOINT } from './api-endpoint'
@@ -53,10 +53,13 @@ export function useLogout() {
         }
     })
 }
+type UserProfile = {
+    metadata: User
+}
 
 export function useProfile({ slug }: { slug: string }) {
     const fetchData = async () => {
-        return (await axiosInstance.get(`${API_ENDPOINT.USER}/${slug}`)).data
+        return (await axiosInstance.get<UserProfile>(`${API_ENDPOINT.USER}/${slug}`)).data
     }
 
     return useQuery({

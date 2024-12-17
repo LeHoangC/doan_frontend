@@ -13,7 +13,7 @@ import { useAuthStore } from '@/store'
 const Comment = ({ data }: { data: any }) => {
     const [isReply, setIsReply] = useState(false)
     const [isShowReplyComment, setIsShowReplyComment] = useState(false)
-    const [page, setPage] = useState(1)
+    // const [page, setPage] = useState(1)
 
     const { mutate: createComment } = useCreateComment()
     const { mutate: deleteComment } = useDeleteCommentMutation()
@@ -32,7 +32,7 @@ const Comment = ({ data }: { data: any }) => {
     }
 
     const { comments: repliedComments } = useCommentsQuery({
-        page,
+        page: 1,
         postId: data.comment_postId,
         parentCommentId: data._id,
     })

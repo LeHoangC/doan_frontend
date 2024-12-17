@@ -23,7 +23,7 @@ const defaultValues = {
 
 const Comments = ({ postId }: { postId: string }) => {
     const { mutate: createComment } = useCreateComment()
-    const [page, setPage] = useState(1)
+    // const [page, setPage] = useState(1)
     const [showPicker, setShowPicker] = useState<boolean>(false)
     const { user } = useAuthStore()
 
@@ -36,7 +36,7 @@ const Comments = ({ postId }: { postId: string }) => {
         createComment({ content, postId })
         setValue('content', '')
     }
-    const { comments } = useCommentsQuery({ page, postId })
+    const { comments } = useCommentsQuery({ page: 1, postId })
 
     const onEmojiClick = (emojiObject: EmojiClickData) => {
         const currentValue = getValues('content')

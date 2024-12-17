@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { useAuthStore } from '@/store'
 import axios from 'axios'
+import Image from 'next/image'
 
 type FormLogin = {
     email: string
@@ -22,11 +23,7 @@ const Auth = () => {
 
     const router = useRouter()
 
-    const {
-        register: registerLogin,
-        handleSubmit: handleSubmitLogin,
-        formState: { errors: errorsLogin },
-    } = useForm<FormLogin>({
+    const { register: registerLogin, handleSubmit: handleSubmitLogin } = useForm<FormLogin>({
         resolver: yupResolver(loginValidationSchema),
     })
 
@@ -45,7 +42,13 @@ const Auth = () => {
             <div className="min-h-screen flex flex-col items-center justify-center py-6 px-4">
                 <div className="max-w-md w-full">
                     <a href="javascript:void(0)">
-                        <img src="/logo.png" alt="logo" className="w-40 mb-8 mx-auto block" />
+                        <Image
+                            src="/logo.png"
+                            alt="logo"
+                            width={160}
+                            height={160}
+                            className="w-40 mb-8 mx-auto block"
+                        />
                     </a>
 
                     <div className="p-8 rounded-2xl bg-white shadow">
@@ -101,7 +104,7 @@ const Auth = () => {
                                 </button>
                             </div>
                             <p className="text-gray-800 text-sm !mt-8 text-center">
-                                Don't have an account?{' '}
+                                Không có tài khoản
                                 <Link
                                     href="/register"
                                     className="text-blue-600 hover:underline ml-1 whitespace-nowrap font-semibold"

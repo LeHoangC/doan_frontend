@@ -2,7 +2,7 @@ import AddPost from '@/components/AddPost'
 import Feed from '@/components/Feed'
 import LeftMenu from '@/components/LeftMenu'
 import RightMenu from '@/components/RightMenu'
-import Stories from '@/components/Stories'
+// import Stories from '@/components/Stories'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {

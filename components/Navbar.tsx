@@ -7,7 +7,6 @@ import { FiHome, FiUsers } from 'react-icons/fi'
 import { useLogout, useProfile } from '@/data/user'
 import { useAuthStore } from '@/store'
 import { IoIosLogOut } from 'react-icons/io'
-import { FaBell } from 'react-icons/fa'
 
 const Navbar = () => {
     const modalRef = useRef<HTMLDialogElement>(null)

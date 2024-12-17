@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { FcGoogle } from 'react-icons/fc'
 import { BsGithub } from 'react-icons/bs'
 import { FaFacebook } from 'react-icons/fa'
+import Image from 'next/image'
 
 type FormRegister = {
     name: string
@@ -125,7 +126,7 @@ const Register = () => {
                     </div>
 
                     <div className="md:h-full bg-[#000842] rounded-xl lg:p-12 p-8">
-                        <img
+                        <Image
                             src="https://readymadeui.com/signin-image.webp"
                             className="w-full h-full object-contain"
                             alt="login-image"

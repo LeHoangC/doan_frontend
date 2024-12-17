@@ -175,7 +175,7 @@ const Sidebar = () => {
     )
 }
 
-const ChatHeader = ({ callUser }) => {
+const ChatHeader = ({ callUser }: { callUser: (id: string) => void }) => {
     const { selectedUser } = useSelectedUser()
 
     if (!selectedUser) return null
@@ -206,7 +206,7 @@ const ChatHeader = ({ callUser }) => {
     )
 }
 
-const ChatWindow = ({ callUser }) => {
+const ChatWindow = ({ callUser }: { callUser: (id: string) => void }) => {
     const { selectedUser } = useSelectedUser()
     if (!selectedUser)
         return (
@@ -247,7 +247,7 @@ const ChatMessages = () => {
                 queryClient.invalidateQueries({ queryKey: [API_ENDPOINT.MESSAGE] })
             }
         })
-    }, [])
+    }, [queryClient, socket])
 
     return (
         <div className="h-full overflow-y-scroll mx-6 mt-4">
@@ -349,11 +349,11 @@ const Messages = () => {
 
     const { socket, roomId, fromVideo, isReject, selectedUser } = useSelectedUser()
 
-    const localVideo = useRef()
-    const remoteVideo = useRef()
-    const peerRef = useRef()
+    const localVideo = useRef<HTMLVideoElement | null>(null)
+    const remoteVideo = useRef<HTMLVideoElement | null>(null)
+    const peerRef = useRef<any>(null)
 
-    const createPeer = (initiator, stream) => {
+    const createPeer = (initiator: boolean, stream: MediaStream) => {
         return new Peer({
             initiator, // Đúng cho một peer duy nhất
             trickle: false,
@@ -367,7 +367,7 @@ const Messages = () => {
             peerRef.current = null
         }
 
-        if (localVideo.current) {
+        if (localVideo.current && localVideo.current.srcObject instanceof MediaStream) {
             localVideo.current.srcObject.getTracks().forEach((track) => track.stop())
         }
 
@@ -375,10 +375,10 @@ const Messages = () => {
     }
 
     useEffect(() => {
-        isReject && endCall()
+        if (isReject) {
+            endCall()
+        }
     }, [isReject])
-
-    console.log(isReject)
 
     const joinRoom = () => {
         setInCall(true)
@@ -396,7 +396,7 @@ const Messages = () => {
                 if (remoteVideo.current) remoteVideo.current.srcObject = stream
             })
 
-            peer.on('error', (err) => {
+            peer.on('error', () => {
                 endCall()
             })
 
@@ -404,7 +404,7 @@ const Messages = () => {
                 endCall()
             })
 
-            socket.current.on('receive_signal', (data) => {
+            socket.current.on('receive_signal', (data: { type: string; signal: string }) => {
                 if (peerRef.current) {
                     const peerConnection = peerRef.current._pc
                     if (peerConnection.signalingState === 'stable') {
@@ -419,7 +419,7 @@ const Messages = () => {
         })
     }
 
-    const callUser = (target) => {
+    const callUser = (target: string) => {
         joinRoom()
         socket.current.emit('call_user', { from: user?.name, to: target, roomId: randomRoomId })
     }

@@ -36,9 +36,13 @@ export type Tokens = {
 export type User = {
     _id: string,
     name: string,
+    location: string
+    education?: string
     email: string
     picturePath?: string
-    slug: string
+    slug: string,
+    friends: string[]
+    gender?: 'male' | 'female' | 'other';
 }
 
 export type PostType = {

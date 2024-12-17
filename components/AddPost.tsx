@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { FaImage } from 'react-icons/fa'
 import { IoCloseSharp } from 'react-icons/io5'
 import { useForm, Controller } from 'react-hook-form'
@@ -66,13 +66,13 @@ const AddPost = () => {
         }
     }
 
-    const closeModalFormCreate = () => {
+    const closeModalFormCreate = useCallback(() => {
         if (modalFormCreate.current) {
             modalFormCreate.current.close()
         }
         reset({ contentPost: '', typePost: 'public', imageChose: null })
         setImageChose(null)
-    }
+    }, [reset])
 
     const openModalGenCaption = () => {
         if (modalGenCaption.current) {
@@ -92,10 +92,12 @@ const AddPost = () => {
         if (isSuccess) {
             closeModalFormCreate()
         }
-    }, [isSuccess])
+    }, [isSuccess, closeModalFormCreate])
 
     const handleGenTextToAi = async () => {
         setContent('')
+
+        // Gọi API
         const response = await fetch(`http://localhost:3001/v1/api/posts/gen-caption?prompt=${textInputAi}`, {
             headers: {
                 'Content-Type': 'text/event-stream',
@@ -104,10 +106,26 @@ const AddPost = () => {
 
         const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader()
 
+        // Kiểm tra nếu reader không tồn tại
+        if (!reader) {
+            console.error('Reader not available')
+            return
+        }
+
+        // Đọc dữ liệu từ stream
         while (true) {
-            const { value, done } = await reader?.read()
-            if (done) break
-            setContent((prev) => prev + value)
+            const result = await reader.read()
+
+            // Nếu result là undefined hoặc stream đã kết thúc, thoát vòng lặp
+            if (!result || result.done) break
+
+            // Gán giá trị và kiểm tra done
+            const { value } = result
+
+            // Cập nhật content với giá trị đọc được
+            if (value) {
+                setContent((prev) => prev + value)
+            }
         }
     }
 
@@ -240,13 +258,13 @@ const AddPost = () => {
                                 inputRef.current?.click()
                             }}
                         />
-                        {imageChose && (
+                        {imageChose && imageChose.preview && (
                             <div className="relative">
-                                <img
+                                <Image
                                     src={imageChose.preview}
                                     alt=""
-                                    width={'50%'}
-                                    height={'50%'}
+                                    width={500}
+                                    height={500}
                                     className="rounded-md"
                                 />
                                 <span

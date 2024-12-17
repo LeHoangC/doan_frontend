@@ -4,7 +4,7 @@ import { useAddFriend, useProfile, useUpdateUser, useUploadAvatar } from '@/data
 import Image from 'next/image'
 import React, { useRef } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { FaCamera, FaPen, FaTransgender } from 'react-icons/fa'
+import { FaCamera, FaTransgender } from 'react-icons/fa'
 import Link from 'next/link'
 import { LuGraduationCap } from 'react-icons/lu'
 import { VscHome } from 'react-icons/vsc'
@@ -37,6 +37,8 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
     const { data: { metadata } = {} } = useProfile({ slug: profileId })
     const { data: { metadata: currentUser } = {} } = useProfile({ slug: user?.slug! })
     const { mutate } = useUploadAvatar()
+
+    console.log(metadata)
 
     const openModalAvatar = () => {
         if (modalRefAvatar.current) {
@@ -176,6 +178,7 @@ const ProfileId = ({ params }: { params: Promise<{ profileId: string }> }) => {
                         </div>
                     </div>
                     {user?.slug !== profileId &&
+                        metadata &&
                         !currentUser?.friends?.map((item: any) => item._id).includes(metadata?._id) && (
                             <button
                                 className="bg-primary text-white ml-4 px-3 py-2 rounded-md text-sm font-medium flex items-center gap-2"

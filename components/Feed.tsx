@@ -35,7 +35,7 @@ const Feed = () => {
         if (inView) {
             fetchNextPage()
         }
-    }, [inView])
+    }, [inView, fetchNextPage])
 
     if (!data || data.pages.every((page) => page?.data.metadata.length === 0)) {
         return (
