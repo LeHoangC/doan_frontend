@@ -5,6 +5,7 @@ export const axiosInstance = axios.create({
     baseURL: 'http://localhost:3001/v1/api',
     headers: {
         // 'Content-Type': 'application/json'
+        'Referer': 'https://doan-frontend-brown.vercel.app/',
     }
 })
 
